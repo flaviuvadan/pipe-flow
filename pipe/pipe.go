@@ -6,6 +6,6 @@ type Pipe struct {
 }
 
 // New returns a new instance of Pipe
-func New() *Pipe {
+func NewPipe() *Pipe {
 	return &Pipe{}
 }

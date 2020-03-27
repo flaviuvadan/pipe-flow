@@ -6,6 +6,6 @@ type Junction struct {
 }
 
 // New returns a new instance of a junc struct
-func New() *Junction {
+func NewJunction() *Junction {
 	return &Junction{}
 }

@@ -6,6 +6,6 @@ type Sink struct {
 }
 
 // New returns a new instance of a Sink
-func New() *Sink {
+func NewSink() *Sink {
 	return &Sink{}
 }

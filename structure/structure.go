@@ -7,6 +7,6 @@ type Structure struct {
 }
 
 // New returns a new instance of a Structure
-func New() *Structure {
+func NewStructure() *Structure {
 	return &Structure{}
 }
