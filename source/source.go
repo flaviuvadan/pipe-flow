@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/flaviuvadan/pipe-flow/pipe"
 	"strconv"
@@ -22,19 +23,25 @@ type Source struct {
 }
 
 // New returns a new instance of a Source
-func NewSource(dsc, pth string, pps map[string]*pipe.Pipe) *Source {
+func NewSource(dsc, pth string, pps map[string]*pipe.Pipe) (*Source, error) {
 	s := &Source{
 		description: dsc,
 		path:        pth,
 		pipes:       pps,
 	}
-	s.read()
+	err := s.read()
+	return s, err
 }
 
 // read reads in the CSV formatted file passed as path to the Source initializer
 func (s *Source) read() error {
-	f, err := os.Open(s.path)
+	cwd, err := os.Getwd()
 	if err != nil {
+		return fmt.Errorf("failed to get the current working directory")
+	}
+	f, err := os.Open(path.Join(cwd, s.path))
+	if err != nil {
+		fmt.Println(err)
 		return fmt.Errorf("failed to open the file located at: %s", s.path)
 	}
 	defer f.Close()
@@ -44,17 +51,23 @@ func (s *Source) read() error {
 	if err != nil {
 		return fmt.Errorf("failed to read the content of the file located at: %s", s.path)
 	}
+
+	if len(content) == 0 {
+		return fmt.Errorf("empty file provided")
+	}
+
 	cols := content[COL_INDEX]
-	for i, c := range cols {
-		col_data := make([]float64, len(content)-1)
+	s.data = map[string][]float64{}
+	for _, c := range cols {
+		colData := make([]float64, len(content)-1)
 		for i, r := range content[1:] {
 			v, err := strconv.ParseFloat(r[i], 64)
 			if err != nil {
 				return fmt.Errorf("failed to parse row value to float64: %v", r[i])
 			}
-			col_data[i] = v
+			colData[i] = v
 		}
-		s.data[c] = col_data
+		s.data[c] = colData
 	}
 	return nil
 }
