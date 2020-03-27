@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strconv"
 
 	"github.com/flaviuvadan/pipe-flow/pipe"
-	"strconv"
 )
 
-// COL_INDEX defines the position of the column names in the slice given by the csv package after reading a CSV file
-const COL_INDEX = 0
+// ColIndex defines the position of the column names in the slice given by the csv package after reading a CSV file
+const ColIndex = 0
 
 // Source represents the beginning state of a pipeline
 type Source struct {
@@ -56,7 +56,7 @@ func (s *Source) read() error {
 		return fmt.Errorf("empty file provided")
 	}
 
-	cols := content[COL_INDEX]
+	cols := content[ColIndex]
 	s.data = map[string][]float64{}
 	for _, c := range cols {
 		colData := make([]float64, len(content)-1)

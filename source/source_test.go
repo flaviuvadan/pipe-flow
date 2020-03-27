@@ -2,9 +2,11 @@ package source
 
 import (
 	"fmt"
-	"github.com/flaviuvadan/pipe-flow/pipe"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/flaviuvadan/pipe-flow/pipe"
 )
 
 func TestNewSource(t *testing.T) {
