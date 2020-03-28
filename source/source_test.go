@@ -55,15 +55,14 @@ func TestNewSource(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Parallel()
 		t.Run(tt.name, func(t *testing.T) {
 			s, err := NewSource(tt.description, tt.path, tt.pipes)
-			assert.Equal(t, s.description, tt.description)
-			assert.Equal(t, s.filename, tt.path)
-			assert.Equal(t, s.pipes, tt.pipes)
 			if tt.expectedErr != nil {
 				assert.EqualError(t, err, tt.expectedErr.Error())
 			}
+			assert.Equal(t, s.description, tt.description)
+			assert.Equal(t, s.filename, tt.path)
+			assert.Equal(t, s.pipes, tt.pipes)
 		})
 	}
 }
