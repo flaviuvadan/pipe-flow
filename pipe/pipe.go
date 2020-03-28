@@ -37,13 +37,14 @@ func (p *Pipe) Flow() error {
 	if p.singleOp == nil {
 		return fmt.Errorf("cannot flow input through nil singleOp")
 	}
+	p.output = map[string][]float64{}
 	for c, r := range p.input {
 		// TODO: use a sync/wait group to execute this in parallel
 		p.output[c] = make([]float64, len(r))
 		for i, v := range r {
 			newV, err := p.singleOp(v)
 			if err != nil {
-				return fmt.Errorf("failed to apply singleOp to val %v on row %v", v, i)
+				return fmt.Errorf("failed to apply singleOp to val %v on row %v with op msg: %v", v, i, err)
 			}
 			p.output[c][i] = newV
 		}
