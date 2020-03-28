@@ -17,7 +17,7 @@ const ColIndex = 0
 // Source represents the beginning state of a pipeline
 type Source struct {
 	description string                // description of the source
-	path        string                // path to the CSV file to be read by the source
+	filename    string                // filename to the CSV file to be read by the source, in the current working directory
 	data        map[string][]float64  // mapping of CSV column titles to the column data
 	pipes       map[string]*pipe.Pipe // mapping of CSV column titles to the pipes that will operate on the columns
 }
@@ -26,30 +26,30 @@ type Source struct {
 func NewSource(dsc, pth string, pps map[string]*pipe.Pipe) (*Source, error) {
 	s := &Source{
 		description: dsc,
-		path:        pth,
+		filename:    pth,
 		pipes:       pps,
 	}
 	err := s.read()
 	return s, err
 }
 
-// read reads in the CSV formatted file passed as path to the Source initializer
+// read reads in the CSV formatted file passed as filename to the Source initializer
 func (s *Source) read() error {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("failed to get the current working directory")
 	}
-	f, err := os.Open(path.Join(cwd, s.path))
+	f, err := os.Open(path.Join(cwd, s.filename))
 	if err != nil {
 		fmt.Println(err)
-		return fmt.Errorf("failed to open the file located at: %s", s.path)
+		return fmt.Errorf("failed to open the file located at: %s", s.filename)
 	}
 	defer f.Close()
 
 	r := csv.NewReader(f)
 	content, err := r.ReadAll()
 	if err != nil {
-		return fmt.Errorf("failed to read the content of the file located at: %s", s.path)
+		return fmt.Errorf("failed to read the content of the file located at: %s", s.filename)
 	}
 
 	if len(content) == 0 {
