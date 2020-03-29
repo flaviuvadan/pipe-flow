@@ -26,11 +26,19 @@ CSV file that holds the results. The results may not be structured the same way 
 different pipeline functions that can be created. For example, a CSV column may end with a summary statistic while 
 another may end with independently modified values.
 
+## Structure
+A concept that holds and coordinates calls to flow data through pipes, execute follow-up pipes in junctions, and make 
+the sink dump its data once everything is done.
+
 ### Code examples
-```go
-package example
+See `main.go` for an example that does not use junctions. I am still working on this and junctions are currently not 
+part of the structure. 
 
-import "fmt"
-
-fmt.Printf("Flav, add code examples")
+## Test and build
+Run: 
+```
+# build the project files
+go build .
+# test all the files of the project, including sub-directories
+go test ./...
 ```
