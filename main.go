@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/flaviuvadan/pipe-flow/pipe"
 	"github.com/flaviuvadan/pipe-flow/sink"
 	"github.com/flaviuvadan/pipe-flow/source"
