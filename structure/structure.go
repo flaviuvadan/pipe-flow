@@ -3,6 +3,8 @@
 package structure
 
 import (
+	"fmt"
+
 	"github.com/flaviuvadan/pipe-flow/junction"
 	"github.com/flaviuvadan/pipe-flow/pipe"
 	"github.com/flaviuvadan/pipe-flow/sink"
@@ -32,6 +34,14 @@ func NewStructure(dsc string, src *source.Source, snk *sink.Sink) *Structure {
 
 // Register adds pipes or junctions to the structure
 func (s *Structure) Register(i interface{}) error {
+	switch v := i.(type) {
+	case *pipe.Pipe:
+		s.pipes = append(s.pipes, v)
+	case *junction.Junction:
+		s.junctions = append(s.junctions, v)
+	default:
+		return fmt.Errorf("provided interface cannot be cast to any known type")
+	}
 	return nil
 }
 
