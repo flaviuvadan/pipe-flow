@@ -1,7 +1,10 @@
 // pipe package is responsible for holding all the logic of pipes.
 package pipe
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // Pipe struct represents a pipeline through which data flows
 type Pipe struct {
@@ -9,6 +12,8 @@ type Pipe struct {
 	input       map[string][]float64           // data that the pipe will apply the op to
 	singleOp    func(float64) (float64, error) // the singleOp that will be applied to independent input data points
 	output      map[string][]float64           // the output after applying the singleOp to the input
+	start       time.Time                      // start time of the pipeline
+	end         time.Time                      // end time of the pipeline
 }
 
 // New returns a new instance of Pipe
@@ -26,6 +31,11 @@ func (p *Pipe) SetInput(in map[string][]float64) {
 	p.input = in
 }
 
+// GetInput returns the input that was specified to the pipe
+func (p *Pipe) GetInput() map[string][]float64 {
+	return p.input
+}
+
 // SetOutput sets the output of the pipe to a custom one that is not computed by Flow
 // this is mostly implemented for testing purposes as we would otherwise have to set up
 // CSV files for testing the Sink package
@@ -38,8 +48,14 @@ func (p *Pipe) GetOutput() map[string][]float64 {
 	return p.output
 }
 
+// GetFlowDuration tells how long the Flow operation needed to process the pipeline input
+func (p *Pipe) GetFlowDuration() time.Duration {
+	return p.end.Sub(p.start)
+}
+
 // Flow flows the specified input through the specified pipe singleOp and stores the output
 func (p *Pipe) Flow() error {
+	p.start = time.Now()
 	if p.input == nil {
 		return fmt.Errorf("cannot flow nil input through specified singleOp")
 	}
@@ -58,5 +74,6 @@ func (p *Pipe) Flow() error {
 			p.output[c][i] = newV
 		}
 	}
+	p.end = time.Now()
 	return nil
 }
