@@ -23,10 +23,10 @@ type Source struct {
 }
 
 // New returns a new instance of a Source
-func NewSource(dsc, pth string, pps map[string]*pipe.Pipe) (*Source, error) {
+func NewSource(dsc, file string, pps map[string]*pipe.Pipe) (*Source, error) {
 	s := &Source{
 		description: dsc,
-		filename:    pth,
+		filename:    file,
 		pipes:       pps,
 	}
 	err := s.read()
@@ -58,14 +58,14 @@ func (s *Source) read() error {
 
 	cols := content[ColIndex]
 	s.data = map[string][]float64{}
-	for _, c := range cols {
+	for i, c := range cols {
 		colData := make([]float64, len(content)-1)
-		for i, r := range content[1:] {
+		for j, r := range content[1:] {
 			v, err := strconv.ParseFloat(r[i], 64)
 			if err != nil {
 				return fmt.Errorf("failed to parse row value to float64: %v", r[i])
 			}
-			colData[i] = v
+			colData[j] = v
 		}
 		s.data[c] = colData
 	}
