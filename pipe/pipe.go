@@ -5,17 +5,19 @@ import "fmt"
 
 // Pipe struct represents a pipeline through which data flows
 type Pipe struct {
-	input    map[string][]float64           // data that the pipe will apply the op to
-	singleOp func(float64) (float64, error) // the singleOp that will be applied to independent input data points
-	output   map[string][]float64           // the output after applying the singleOp to the input
+	description string                         // a description/name of the pipeline, used for monitoring
+	input       map[string][]float64           // data that the pipe will apply the op to
+	singleOp    func(float64) (float64, error) // the singleOp that will be applied to independent input data points
+	output      map[string][]float64           // the output after applying the singleOp to the input
 }
 
 // New returns a new instance of Pipe
-func NewPipe(so func(float64) (float64, error)) *Pipe {
+func NewPipe(ds string, so func(float64) (float64, error)) *Pipe {
 	return &Pipe{
-		input:    nil,
-		singleOp: so,
-		output:   nil,
+		description: ds,
+		input:       nil,
+		singleOp:    so,
+		output:      nil,
 	}
 }
 
