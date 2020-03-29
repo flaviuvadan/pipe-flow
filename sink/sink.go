@@ -36,7 +36,6 @@ func NewSink(fn string, p []*pipe.Pipe) (*Sink, error) {
 		filename: fn,
 		pipes:    p,
 	}
-	s.Collect()
 	return s, nil
 }
 

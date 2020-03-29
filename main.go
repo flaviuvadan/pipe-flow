@@ -38,7 +38,9 @@ func main() {
 			panic(fmt.Sprintf("failed to register pipe for column %v", k))
 		}
 	}
-	if err := stc.Flow(); err != nil {
+	if d, err := stc.Flow(); err != nil {
 		panic("structure failed to flow")
+	} else {
+		fmt.Printf("Pipe structure done in: %v\n", d)
 	}
 }

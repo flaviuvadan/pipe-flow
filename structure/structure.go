@@ -4,6 +4,7 @@ package structure
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/flaviuvadan/pipe-flow/junction"
 	"github.com/flaviuvadan/pipe-flow/pipe"
@@ -46,6 +47,19 @@ func (s *Structure) Register(i interface{}) error {
 }
 
 // Flow launches the flow of all the pipelines that are registered with this structure
-func (s *Structure) Flow() error {
-	return nil
+func (s *Structure) Flow() (string, error) {
+	start := time.Now()
+	// TODO: this does not take into account the existence of junctions
+	// TODO: implement junction support
+	for _, p := range s.pipes {
+		if err := p.Flow(); err != nil {
+			return "", fmt.Errorf("pipe failed to flow data, err: %v", err)
+		}
+	}
+	s.sink.Collect()
+	if err := s.sink.Dump(); err != nil {
+		return "", fmt.Errorf("sink failed to dump data, err: %v", err)
+	}
+	duration := time.Now().Sub(start)
+	return duration.String(), nil
 }

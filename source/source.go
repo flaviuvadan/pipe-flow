@@ -41,6 +41,12 @@ func NewSource(dsc, file string, pps map[string]*pipe.Pipe) (*Source, error) {
 
 // setPipeData sets the input data sources for each pipe
 func (s *Source) setPipeData() error {
+	if len(s.pipes) == 0 {
+		return nil
+	}
+	if len(s.data) == 0 {
+		return nil
+	}
 	if len(s.data) != len(s.pipes) {
 		return fmt.Errorf("%v pipe/s do/es not have a data/data source/s", math.Abs(float64(len(s.data)-len(s.pipes))))
 	}

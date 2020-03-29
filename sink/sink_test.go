@@ -92,6 +92,7 @@ func TestSink_Collect(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s, _ := NewSink(tt.filename, tt.pipes)
+			s.Collect()
 			for i, p := range s.pipes {
 				p.SetOutput(tt.pipesOut[i])
 			}
