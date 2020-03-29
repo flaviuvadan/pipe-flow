@@ -11,20 +11,31 @@ import (
 
 // Structure represents the state of the data processing system
 type Structure struct {
-	description string
-	source      *source.Source
-	sink        *sink.Sink
-	pipes       []*pipe.Pipe
-	junctions   []*junction.Junction
+	description string               // a description of the structure and what it does e.g the data it processes
+	inform      bool                 // whether to inform users of the process of the pipelines as they are performing, state informs occur in junctions
+	source      *source.Source       // data source
+	sink        *sink.Sink           // data sink
+	pipes       []*pipe.Pipe         // pipes that are coordinated by the structure
+	junctions   []*junction.Junction // junctions that are intermediary steps between pipes
 }
 
 // New returns a new instance of a Structure
-func NewStructure(dsc string, src *source.Source, snk *sink.Sink, pps []*pipe.Pipe, jnc []*junction.Junction) *Structure {
+func NewStructure(dsc string, src *source.Source, snk *sink.Sink) *Structure {
 	return &Structure{
 		description: dsc,
 		source:      src,
 		sink:        snk,
-		pipes:       pps,
-		junctions:   jnc,
+		pipes:       []*pipe.Pipe{},
+		junctions:   []*junction.Junction{},
 	}
+}
+
+// Register adds pipes or junctions to the structure
+func (s *Structure) Register(i interface{}) error {
+	return nil
+}
+
+// Flow launches the flow of all the pipelines that are registered with this structure
+func (s *Structure) Flow() error {
+	return nil
 }
