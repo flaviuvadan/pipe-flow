@@ -4,6 +4,7 @@ package source
 import (
 	"encoding/csv"
 	"fmt"
+	"math"
 	"os"
 	"path"
 	"strconv"
@@ -29,8 +30,24 @@ func NewSource(dsc, file string, pps map[string]*pipe.Pipe) (*Source, error) {
 		filename:    file,
 		pipes:       pps,
 	}
-	err := s.read()
-	return s, err
+	if err := s.read(); err != nil {
+		return nil, err
+	}
+	if err := s.setPipeData(); err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+// setPipeData sets the input data sources for each pipe
+func (s *Source) setPipeData() error {
+	if len(s.data) != len(s.pipes) {
+		return fmt.Errorf("%v pipe/s do/es not have a data/data source/s", math.Abs(float64(len(s.data)-len(s.pipes))))
+	}
+	for k, v := range s.data {
+		s.pipes[k].SetInput(map[string][]float64{k: v})
+	}
+	return nil
 }
 
 // read reads in the CSV formatted file passed as filename to the Source initializer
