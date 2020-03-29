@@ -15,12 +15,13 @@ type Sink struct {
 }
 
 // New returns a new instance of a Sink
-func NewSink(p []*pipe.Pipe) (*Sink, error) {
+func NewSink(fn string, p []*pipe.Pipe) (*Sink, error) {
 	if p == nil || len(p) == 0 {
 		return nil, fmt.Errorf("cannot create a sink without pipes")
 	}
 	s := &Sink{
-		pipes: p,
+		filename: fn,
+		pipes:    p,
 	}
 	s.Collect()
 	return s, nil
