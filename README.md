@@ -42,3 +42,10 @@ go build .
 # test all the files of the project, including sub-directories
 go test ./...
 ```
+
+## TODO
+
+1. Make pipes run in parallel
+1. Make structure take into account presence of junctions
+1. Make structure accept param to tell junctions whether to inform user of processing status
+1. Other TODOs left in the code 
