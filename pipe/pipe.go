@@ -24,6 +24,13 @@ func (p *Pipe) SetInput(in map[string][]float64) {
 	p.input = in
 }
 
+// SetOutput sets the output of the pipe to a custom one that is not computed by Flow
+// this is mostly implemented for testing purposes as we would otherwise have to set up
+// CSV files for testing the Sink package
+func (p *Pipe) SetOutput(ot map[string][]float64) {
+	p.output = ot
+}
+
 // GetOutput allows a consumer to get the output of this pipe
 func (p *Pipe) GetOutput() map[string][]float64 {
 	return p.output
