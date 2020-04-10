@@ -23,11 +23,11 @@ type Structure struct {
 }
 
 // New returns a new instance of a Structure
-func NewStructure(dsc string, src *source.Source, snk *sink.Sink) *Structure {
+func NewStructure(dsc string) *Structure {
 	return &Structure{
 		description: dsc,
-		source:      src,
-		sink:        snk,
+		source:      nil,
+		sink:        nil,
 		pipes:       []*pipe.Pipe{},
 		junctions:   []*junction.Junction{},
 	}
@@ -40,6 +40,10 @@ func (s *Structure) Register(i interface{}) error {
 		s.pipes = append(s.pipes, v)
 	case *junction.Junction:
 		s.junctions = append(s.junctions, v)
+	case *source.Source:
+		s.source = v
+	case *sink.Sink:
+		s.sink = v
 	default:
 		return fmt.Errorf("provided interface cannot be cast to any known type")
 	}
@@ -48,17 +52,34 @@ func (s *Structure) Register(i interface{}) error {
 
 // Flow launches the flow of all the pipelines that are registered with this structure
 func (s *Structure) Flow() (string, error) {
+	if s.source == nil {
+		return "", fmt.Errorf("cannot flow with nil source")
+	}
+	if s.sink == nil {
+		return "", fmt.Errorf("cannot flow with nil sink")
+	}
 	start := time.Now()
-	// TODO: this does not take into account the existence of junctions
-	// TODO: implement junction support
-	for _, p := range s.pipes {
-		if err := p.Flow(); err != nil {
-			return "", fmt.Errorf("pipe failed to flow data, err: %v", err)
+
+	q := NewQueue(len(s.junctions) + 1) // + 1 for source
+	if err := q.Push(s.source); err != nil {
+		return "", fmt.Errorf("failed to init queue by pushing source, err: %v", err)
+	}
+	for q.Size() != 0 {
+		o := q.Pop()
+		switch v := o.(type) {
+		case *source.Source: // a source should always be the first thing that gets processed
+			for _, p := range v.Pipes {
+				if err := p.Flow(); err != nil {
+					return "", fmt.Errorf("failed to perform pipe flow, err: %v", err)
+				}
+			}
+		case *junction.Junction:
+			// TODO: implement junction support after a bit more thinking, this seems too convoluted
 		}
 	}
-	s.sink.Collect()
+	s.sink.Collect() // collect results
 	if err := s.sink.Dump(); err != nil {
-		return "", fmt.Errorf("sink failed to dump data, err: %v", err)
+		return "", fmt.Errorf("failed to dump results from sink, err: %v", err)
 	}
 	duration := time.Now().Sub(start)
 	return duration.String(), nil

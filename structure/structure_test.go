@@ -10,7 +10,7 @@ import (
 )
 
 func TestStructure_Register(t *testing.T) {
-	s := NewStructure("test", nil, nil)
+	s := NewStructure("test")
 	tests := []struct {
 		name        string
 		toRegister  interface{}
