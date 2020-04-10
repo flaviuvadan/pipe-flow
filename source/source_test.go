@@ -62,7 +62,7 @@ func TestNewSource(t *testing.T) {
 			} else {
 				assert.Equal(t, s.description, tt.description)
 				assert.Equal(t, s.filename, tt.path)
-				assert.Equal(t, s.pipes, tt.pipes)
+				assert.Equal(t, s.Pipes, tt.pipes)
 			}
 		})
 	}

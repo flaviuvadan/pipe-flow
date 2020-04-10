@@ -20,7 +20,7 @@ type Source struct {
 	description string                // description of the source
 	filename    string                // filename to the CSV file to be read by the source, in the current working directory
 	data        map[string][]float64  // mapping of CSV column titles to the column data
-	pipes       map[string]*pipe.Pipe // mapping of CSV column titles to the pipes that will operate on the columns
+	Pipes       map[string]*pipe.Pipe // mapping of CSV column titles to the Pipes that will operate on the columns
 }
 
 // New returns a new instance of a Source
@@ -28,7 +28,7 @@ func NewSource(dsc, file string, pps map[string]*pipe.Pipe) (*Source, error) {
 	s := &Source{
 		description: dsc,
 		filename:    file,
-		pipes:       pps,
+		Pipes:       pps,
 	}
 	if err := s.read(); err != nil {
 		return nil, err
@@ -41,17 +41,17 @@ func NewSource(dsc, file string, pps map[string]*pipe.Pipe) (*Source, error) {
 
 // setPipeData sets the input data sources for each pipe
 func (s *Source) setPipeData() error {
-	if len(s.pipes) == 0 {
+	if len(s.Pipes) == 0 {
 		return nil
 	}
 	if len(s.data) == 0 {
 		return nil
 	}
-	if len(s.data) != len(s.pipes) {
-		return fmt.Errorf("%v pipe/s do/es not have a data/data source/s", math.Abs(float64(len(s.data)-len(s.pipes))))
+	if len(s.data) != len(s.Pipes) {
+		return fmt.Errorf("%v pipe/s do/es not have a data/data source/s", math.Abs(float64(len(s.data)-len(s.Pipes))))
 	}
 	for k, v := range s.data {
-		s.pipes[k].SetInput(map[string][]float64{k: v})
+		s.Pipes[k].SetInput(map[string][]float64{k: v})
 	}
 	return nil
 }
