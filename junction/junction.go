@@ -29,5 +29,6 @@ func (j *Junction) GetState() string {
 
 // Continue makes the pipelines continue operating on the originally specified input
 func (j *Junction) Continue() error {
+	j.out.SetInput(j.in.GetOutput())
 	return j.out.Flow()
 }
