@@ -12,13 +12,13 @@ import (
 func main() {
 	pipeA := pipe.NewPipe("column_a_pipe", func(v float64) (float64, error) {
 		return v + 1, nil
-	})
+	}, nil)
 	pipeB := pipe.NewPipe("column_b_pipe", func(v float64) (float64, error) {
 		return v + 1, nil
-	})
+	}, nil)
 	pipeC := pipe.NewPipe("column_c_pipe", func(v float64) (float64, error) {
 		return v + 1, nil
-	})
+	}, nil)
 	pipes := map[string]*pipe.Pipe{
 		"a": pipeA,
 		"b": pipeB,
@@ -32,7 +32,13 @@ func main() {
 	if err != nil {
 		panic("failed to create sink for a, b, c pipes")
 	}
-	stc := structure.NewStructure("structure_for_test_data_pipeline", src, snk)
+	stc := structure.NewStructure("structure_for_test_data_pipeline")
+	if err := stc.Register(src); err != nil {
+		panic("failed to add source to structure")
+	}
+	if err := stc.Register(snk); err != nil {
+		panic("failed to add sink to structure")
+	}
 	for k, v := range pipes {
 		if err := stc.Register(v); err != nil {
 			panic(fmt.Sprintf("failed to register pipe for column %v", k))

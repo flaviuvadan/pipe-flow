@@ -18,12 +18,12 @@ func TestStructure_Register(t *testing.T) {
 	}{
 		{
 			name:        "test_performs_type_assertion_on_pipe",
-			toRegister:  pipe.NewPipe("", nil),
+			toRegister:  pipe.NewPipe("", nil, nil),
 			expectedErr: nil,
 		},
 		{
 			name:        "test_performs_type_assertion_on_junction",
-			toRegister:  junction.NewJunction(nil, nil),
+			toRegister:  junction.NewJunction(nil),
 			expectedErr: nil,
 		},
 		{

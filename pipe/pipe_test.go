@@ -76,7 +76,7 @@ func TestPipe_Flow(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := NewPipe(tt.name, tt.pipeOp)
+			p := NewPipe(tt.name, tt.pipeOp, nil)
 			p.SetInput(tt.pipeIn)
 			err := p.Flow()
 			if err != nil {
