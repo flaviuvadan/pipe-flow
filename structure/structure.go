@@ -72,9 +72,18 @@ func (s *Structure) Flow() (string, error) {
 				if err := p.Flow(); err != nil {
 					return "", fmt.Errorf("failed to perform pipe flow, err: %v", err)
 				}
+				if err := q.Push(p.GetJunction()); err != nil {
+					return "", fmt.Errorf("failed to add the next junction to the flow queue, err: %v", err)
+				}
 			}
 		case *junction.Junction:
-			// TODO: implement junction support after a bit more thinking, this seems too convoluted
+			if j, err := v.Continue(); err != nil {
+				return "", fmt.Errorf("failed to continue flow through junction")
+			} else {
+				if err := q.Push(j); err != nil {
+					return "", fmt.Errorf("failed to add next junction of pipe in flow sequence, err: %v", err)
+				}
+			}
 		}
 	}
 	s.sink.Collect() // collect results
