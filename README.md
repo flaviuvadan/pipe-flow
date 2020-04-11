@@ -1,6 +1,9 @@
 # pipe-flow
 A data processing library that allows the creation of parallel pipelines that end in a common point.
 
+## Build status
+[![<flaviuvadan>](https://circleci.com/gh/flaviuvadan/pipe-flow.svg?style=svg)](https://app.circleci.com/pipelines/github/flaviuvadan/pipe-flow)
+
 ## Flow diagram
 
 ![](diagram.png)
