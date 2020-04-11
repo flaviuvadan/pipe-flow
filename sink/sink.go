@@ -63,6 +63,12 @@ func (s *Sink) Dump() error {
 	}
 	defer f.Close()
 
+	defer func() {
+		if err := f.Close(); err != nil {
+			panic(fmt.Sprintf("failed to dump results after processing, err: %v", err))
+		}
+	}()
+
 	w := csv.NewWriter(f)
 	defer w.Flush()
 

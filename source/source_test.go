@@ -60,7 +60,7 @@ func TestNewSource(t *testing.T) {
 			if err != nil {
 				assert.EqualError(t, err, tt.expectedErr.Error())
 			} else {
-				assert.Equal(t, s.description, tt.description)
+				assert.Equal(t, s.Description, tt.description)
 				assert.Equal(t, s.filename, tt.path)
 				assert.Equal(t, s.Pipes, tt.pipes)
 			}

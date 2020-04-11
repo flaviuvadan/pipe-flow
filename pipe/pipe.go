@@ -8,20 +8,20 @@ import (
 
 // Pipe struct represents a pipeline through which data flows
 type Pipe struct {
-	Description string                         // a Description/name of the pipeline, used for monitoring
-	input       map[string][]float64           // data that the pipe will apply the op to
-	singleOp    func(float64) (float64, error) // the singleOp that will be applied to independent input data points
-	output      map[string][]float64           // the output after applying the singleOp to the input
-	start       time.Time                      // start time of the pipeline
-	end         time.Time                      // end time of the pipeline
+	Description string                           // a Description/name of the pipeline, used for monitoring
+	input       map[string][]float64             // data that the pipe will apply the op to
+	singleOps   []func(float64) (float64, error) // the singleOp that will be applied to independent input data points
+	output      map[string][]float64             // the output after applying the singleOp to the input
+	start       time.Time                        // start time of the pipeline
+	end         time.Time                        // end time of the pipeline
 }
 
 // New returns a new instance of Pipe
-func NewPipe(ds string, so func(float64) (float64, error)) *Pipe {
+func NewPipe(ds string, so []func(float64) (float64, error)) *Pipe {
 	return &Pipe{
 		Description: ds,
 		input:       nil,
-		singleOp:    so,
+		singleOps:   so,
 		output:      nil,
 	}
 }
@@ -57,21 +57,27 @@ func (p *Pipe) GetFlowDuration() time.Duration {
 func (p *Pipe) Flow() error {
 	p.start = time.Now()
 	if p.input == nil {
-		return fmt.Errorf("cannot flow nil input through specified singleOp")
+		return fmt.Errorf("cannot flow nil input through specified singleOps")
 	}
-	if p.singleOp == nil {
-		return fmt.Errorf("cannot flow input through nil singleOp")
+	if p.singleOps == nil {
+		return fmt.Errorf("cannot flow input through nil singleOps")
 	}
 	p.output = map[string][]float64{}
-	for c, r := range p.input {
+	for col, rows := range p.input {
 		// TODO: use a sync/wait group to execute this in parallel
-		p.output[c] = make([]float64, len(r))
-		for i, v := range r {
-			newV, err := p.singleOp(v)
+		p.output[col] = make([]float64, len(rows))
+		for i, val := range rows {
+			newVal, err := p.singleOps[0](val)
 			if err != nil {
-				return fmt.Errorf("failed to apply singleOp to val %v on row %v with op msg: %v", v, i, err)
+				return fmt.Errorf("failed to apply op to val %v on row %v with op msg: %v", val, i, err)
 			}
-			p.output[c][i] = newV
+			for _, op := range p.singleOps[1:] {
+				newVal, err = op(val)
+				if err != nil {
+					return fmt.Errorf("failed to apply op to val %v on row %v with op msg: %v", val, i, err)
+				}
+			}
+			p.output[col][i] = newVal
 		}
 	}
 	p.end = time.Now()

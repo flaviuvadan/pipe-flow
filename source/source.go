@@ -17,16 +17,16 @@ const ColIndex = 0
 
 // Source represents the beginning state of a pipeline
 type Source struct {
-	description string                // description of the source
+	Description string                // Description of the source
+	Pipes       map[string]*pipe.Pipe // mapping of CSV column titles to the Pipes that will operate on the columns
 	filename    string                // filename to the CSV file to be read by the source, in the current working directory
 	data        map[string][]float64  // mapping of CSV column titles to the column data
-	Pipes       map[string]*pipe.Pipe // mapping of CSV column titles to the Pipes that will operate on the columns
 }
 
 // New returns a new instance of a Source
 func NewSource(dsc, file string, pps map[string]*pipe.Pipe) (*Source, error) {
 	s := &Source{
-		description: dsc,
+		Description: dsc,
 		filename:    file,
 		Pipes:       pps,
 	}
@@ -67,7 +67,12 @@ func (s *Source) read() error {
 		fmt.Println(err)
 		return fmt.Errorf("failed to open the file located at: %s", s.filename)
 	}
-	defer f.Close()
+
+	defer func() {
+		if err := f.Close(); err != nil {
+			panic(fmt.Sprintf("failed to close file (%s) after reading content, err: %v", s.filename, err))
+		}
+	}()
 
 	r := csv.NewReader(f)
 	content, err := r.ReadAll()
