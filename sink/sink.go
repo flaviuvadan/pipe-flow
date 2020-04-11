@@ -20,31 +20,31 @@ const (
 // if the filename was not specified, i.e it is "", results.csv is assumed
 type Sink struct {
 	filename string               // the name of the file the sink should dump data into
-	pipes    []*pipe.Pipe         // the collection of pipes whose values are incoming to the sink
-	data     map[string][]float64 // the data the sink collects from the pipes to output to a CSV
+	Pipes    []*pipe.Pipe         // the collection of Pipes whose values are incoming to the sink
+	data     map[string][]float64 // the data the sink collects from the Pipes to output to a CSV
 }
 
 // New returns a new instance of a Sink
 func NewSink(fn string, p []*pipe.Pipe) (*Sink, error) {
 	if p == nil || len(p) == 0 {
-		return nil, fmt.Errorf("cannot create a sink without pipes")
+		return nil, fmt.Errorf("cannot create a sink without Pipes")
 	}
 	if fn == "" {
 		fn = "results.csv"
 	}
 	s := &Sink{
 		filename: fn,
-		pipes:    p,
+		Pipes:    p,
 	}
 	return s, nil
 }
 
-// Collect gets all the data from the pipes that are connected to this sink
+// Collect gets all the data from the Pipes that are connected to this sink
 func (s *Sink) Collect() {
 	// there are many pipelines from which to get data from
 	// have to merge all maps into a single one
 	pipesData := []map[string][]float64{{}}
-	for _, p := range s.pipes {
+	for _, p := range s.Pipes {
 		pipesData = append(pipesData, p.GetOutput())
 	}
 	s.data = Merge(pipesData...)
@@ -61,8 +61,6 @@ func (s *Sink) Dump() error {
 	if err != nil {
 		return fmt.Errorf("failed to create the dump CSV file")
 	}
-	defer f.Close()
-
 	defer func() {
 		if err := f.Close(); err != nil {
 			panic(fmt.Sprintf("failed to dump results after processing, err: %v", err))

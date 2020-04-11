@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/flaviuvadan/pipe-flow/pipe"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/flaviuvadan/pipe-flow/sink"
+	"github.com/flaviuvadan/pipe-flow/source"
 )
 
 func TestStructure_Register(t *testing.T) {
+	testSource, _ := source.NewSource("test source", "test_file.csv", nil)
+	testSink, _ := sink.NewSink("test_result.csv", nil)
 	s := NewStructure("test")
 	tests := []struct {
 		name        string
@@ -16,8 +20,13 @@ func TestStructure_Register(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			name:        "test_performs_type_assertion_on_pipe",
-			toRegister:  pipe.NewPipe("", nil),
+			name:        "test_registers_source",
+			toRegister:  testSource,
+			expectedErr: nil,
+		},
+		{
+			name:        "test_registers_sink",
+			toRegister:  testSink,
 			expectedErr: nil,
 		},
 		{

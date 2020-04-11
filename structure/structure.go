@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/flaviuvadan/pipe-flow/pipe"
 	"github.com/flaviuvadan/pipe-flow/sink"
 	"github.com/flaviuvadan/pipe-flow/source"
 )
@@ -17,7 +16,6 @@ type Structure struct {
 	Inform      bool           // whether to Inform users of the process of the pipelines as they are performing, state informs occur in junctions
 	Source      *source.Source // data Source
 	Sink        *sink.Sink     // data Sink
-	Pipes       []*pipe.Pipe   // Pipes that are coordinated by the structure
 }
 
 // New returns a new instance of a Structure
@@ -26,15 +24,12 @@ func NewStructure(dsc string) *Structure {
 		Description: dsc,
 		Source:      nil,
 		Sink:        nil,
-		Pipes:       []*pipe.Pipe{},
 	}
 }
 
 // Register adds Pipes or junctions to the structure
 func (s *Structure) Register(i interface{}) error {
 	switch v := i.(type) {
-	case *pipe.Pipe:
-		s.Pipes = append(s.Pipes, v)
 	case *source.Source:
 		s.Source = v
 	case *sink.Sink:
@@ -54,7 +49,18 @@ func (s *Structure) Flow() (string, error) {
 		return "", fmt.Errorf("cannot flow with nil Sink")
 	}
 	start := time.Now()
-	// TODO: implement this
+	// TODO: do this in parallel with an error channel
+	for _, p := range s.Source.Pipes {
+		// a single pipe failure interrupts the whole process, which may not be desirable, linked to TODO above
+		if err := p.Flow(); err != nil {
+			return "", fmt.Errorf("structure failed to make pipe flow, err: %v", err)
+		}
+		// TODO: add inform field on pipe to report progress
+	}
+	s.Sink.Collect()
+	if err := s.Sink.Dump(); err != nil {
+		return "", fmt.Errorf("sink failed to dump results, err: %v", err)
+	}
 	duration := time.Now().Sub(start)
 	return duration.String(), nil
 }

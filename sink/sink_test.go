@@ -21,13 +21,13 @@ func TestNewSink(t *testing.T) {
 			name:        "test_errors_on_nil_pipes",
 			filename:    "",
 			pipes:       nil,
-			expectedErr: fmt.Errorf("cannot create a sink without pipes"),
+			expectedErr: fmt.Errorf("cannot create a sink without Pipes"),
 		},
 		{
 			name:        "test_errors_on_no_pipes",
 			filename:    "",
 			pipes:       []*pipe.Pipe{},
-			expectedErr: fmt.Errorf("cannot create a sink without pipes"),
+			expectedErr: fmt.Errorf("cannot create a sink without Pipes"),
 		},
 	}
 	for _, tt := range tests {
@@ -93,7 +93,7 @@ func TestSink_Collect(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s, _ := NewSink(tt.filename, tt.pipes)
 			s.Collect()
-			for i, p := range s.pipes {
+			for i, p := range s.Pipes {
 				p.SetOutput(tt.pipesOut[i])
 			}
 			s.Collect()
