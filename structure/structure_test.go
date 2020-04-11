@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/flaviuvadan/pipe-flow/junction"
 	"github.com/flaviuvadan/pipe-flow/pipe"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,12 +17,7 @@ func TestStructure_Register(t *testing.T) {
 	}{
 		{
 			name:        "test_performs_type_assertion_on_pipe",
-			toRegister:  pipe.NewPipe("", nil, nil),
-			expectedErr: nil,
-		},
-		{
-			name:        "test_performs_type_assertion_on_junction",
-			toRegister:  junction.NewJunction(nil),
+			toRegister:  pipe.NewPipe("", nil),
 			expectedErr: nil,
 		},
 		{

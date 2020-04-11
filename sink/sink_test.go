@@ -52,7 +52,7 @@ func TestSink_Collect(t *testing.T) {
 			name:     "test_collect_gets_single_data",
 			filename: "",
 			pipes: []*pipe.Pipe{
-				pipe.NewPipe("", nil, nil),
+				pipe.NewPipe("", nil),
 			},
 			pipesOut: []map[string][]float64{
 				{
@@ -67,9 +67,9 @@ func TestSink_Collect(t *testing.T) {
 			name:     "test_collect_gets_multi_data",
 			filename: "",
 			pipes: []*pipe.Pipe{
-				pipe.NewPipe("", nil, nil),
-				pipe.NewPipe("", nil, nil),
-				pipe.NewPipe("", nil, nil),
+				pipe.NewPipe("", nil),
+				pipe.NewPipe("", nil),
+				pipe.NewPipe("", nil),
 			},
 			pipesOut: []map[string][]float64{
 				{
@@ -118,7 +118,7 @@ func TestSink_Dump(t *testing.T) {
 			name:     "test_creates_empty_CSV_called_results",
 			filename: "",
 			pipes: []*pipe.Pipe{
-				pipe.NewPipe("", nil, nil),
+				pipe.NewPipe("", nil),
 			},
 			pipesOut:    []map[string][]float64{{}},
 			expectedErr: nil,
@@ -127,7 +127,7 @@ func TestSink_Dump(t *testing.T) {
 			name:     "test_creates_empty_CSV_called_filename",
 			filename: "test.csv",
 			pipes: []*pipe.Pipe{
-				pipe.NewPipe("", nil, nil),
+				pipe.NewPipe("", nil),
 			},
 			pipesOut:    []map[string][]float64{{}},
 			expectedErr: nil,
@@ -136,7 +136,7 @@ func TestSink_Dump(t *testing.T) {
 			name:     "test_creates_CSV_with_expected_content",
 			filename: "test_1.csv",
 			pipes: []*pipe.Pipe{
-				pipe.NewPipe("", nil, nil),
+				pipe.NewPipe("", nil),
 			},
 			pipesOut: []map[string][]float64{
 				{
@@ -148,9 +148,9 @@ func TestSink_Dump(t *testing.T) {
 			name:     "test_creates_CSV_with_expected_extended_content",
 			filename: "test_2.csv",
 			pipes: []*pipe.Pipe{
-				pipe.NewPipe("", nil, nil),
-				pipe.NewPipe("", nil, nil),
-				pipe.NewPipe("", nil, nil),
+				pipe.NewPipe("", nil),
+				pipe.NewPipe("", nil),
+				pipe.NewPipe("", nil),
 			},
 			pipesOut: []map[string][]float64{
 				{

@@ -4,8 +4,6 @@ package pipe
 import (
 	"fmt"
 	"time"
-
-	"github.com/flaviuvadan/pipe-flow/junction"
 )
 
 // Pipe struct represents a pipeline through which data flows
@@ -16,17 +14,15 @@ type Pipe struct {
 	output      map[string][]float64           // the output after applying the singleOp to the input
 	start       time.Time                      // start time of the pipeline
 	end         time.Time                      // end time of the pipeline
-	jct         *junction.Junction             // the junction that the pipe pipes its output into
 }
 
 // New returns a new instance of Pipe
-func NewPipe(ds string, so func(float64) (float64, error), jct *junction.Junction) *Pipe {
+func NewPipe(ds string, so func(float64) (float64, error)) *Pipe {
 	return &Pipe{
 		Description: ds,
 		input:       nil,
 		singleOp:    so,
 		output:      nil,
-		jct:         jct,
 	}
 }
 
@@ -80,14 +76,4 @@ func (p *Pipe) Flow() error {
 	}
 	p.end = time.Now()
 	return nil
-}
-
-// SetJunctionInput takes the output of the pipe and sets it as an input to a junction
-func (p *Pipe) SetJunctionInput() {
-	p.jct.SetNextInput(p.output)
-}
-
-// GetJunction returns the junction the pipe places its input into
-func (p *Pipe) GetJunction() *junction.Junction {
-	return p.jct
 }
