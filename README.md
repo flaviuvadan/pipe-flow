@@ -12,8 +12,8 @@ the function that runs on a specific column of the CSV file.
 
 ## Pipe
 The structure through which data flows. The pipeline applies the specified user function to either all the data points
-independently or perform an aggregation of all the data points to create a common summary. The data can either pass 
-through the pipeline and end straight in a sink, or it can go through a junction.
+independently or perform an aggregation of all the data points to create a common summary. Data passes straight through
+the pipeline and offers the option to report progress as data is processed.
 
 ## Sink
 The sink is a data repository that aggregates all the data that pipeline operations were performed on and creates a new
@@ -26,8 +26,7 @@ A concept that holds and coordinates calls to flow data through pipes, and make 
 everything is done.
 
 ### Code examples
-See `main.go` for an example that does not use junctions. I am still working on this and junctions are currently not 
-part of the structure. 
+See `main.go` for an example.
 
 ## Test and build
 Run: 
@@ -42,5 +41,6 @@ go test ./...
 
 1. Make pipes run in parallel
 1. Add pipe ability to report progress
+1. Add pipe ability to aggregate values
 1. Make structure allow the user specify whether to inform progress or not
 1. Other TODOs left in the code

@@ -28,9 +28,11 @@ func TestPipe_Flow(t *testing.T) {
 			expectedErr: fmt.Errorf("cannot flow nil input through specified singleOps"),
 		},
 		{
-			name:        "test_cannot_flow_input_through_nil_op",
-			pipeOps:     nil,
-			pipeIn:      map[string][]float64{"a": {1.0}},
+			name:    "test_cannot_flow_input_through_nil_op",
+			pipeOps: nil,
+			pipeIn: map[string][]float64{
+				"a": {1.0},
+			},
 			pipeOut:     nil,
 			expectedErr: fmt.Errorf("cannot flow input through nil singleOps"),
 		},
@@ -84,7 +86,7 @@ func TestPipe_Flow(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := NewPipe(tt.name, tt.pipeOps)
+			p := NewSingleOpsPipe(tt.name, tt.pipeOps)
 			p.SetInput(tt.pipeIn)
 			err := p.Flow()
 			if err != nil {

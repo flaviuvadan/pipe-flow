@@ -10,17 +10,17 @@ import (
 )
 
 func main() {
-	pipeA := pipe.NewPipe("column_a_pipe", []func(v float64) (float64, error){
+	pipeA := pipe.NewSingleOpsPipe("column_a_pipe", []func(v float64) (float64, error){
 		func(v float64) (float64, error) {
 			return v + 1, nil
 		},
 	})
-	pipeB := pipe.NewPipe("column_b_pipe", []func(v float64) (float64, error){
+	pipeB := pipe.NewSingleOpsPipe("column_b_pipe", []func(v float64) (float64, error){
 		func(v float64) (float64, error) {
 			return v + 1, nil
 		},
 	})
-	pipeC := pipe.NewPipe("column_c_pipe", []func(v float64) (float64, error){
+	pipeC := pipe.NewSingleOpsPipe("column_c_pipe", []func(v float64) (float64, error){
 		func(v float64) (float64, error) {
 			return v + 1, nil
 		},

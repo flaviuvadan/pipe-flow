@@ -11,18 +11,27 @@ type Pipe struct {
 	Description string                           // a Description/name of the pipeline, used for monitoring
 	input       map[string][]float64             // data that the pipe will apply the op to
 	singleOps   []func(float64) (float64, error) // the singleOp that will be applied to independent input data points
+	aggregateOp func([]float64) (float64, error) // the aggregateOp that will be applied to the whole CSV column
 	output      map[string][]float64             // the output after applying the singleOp to the input
 	start       time.Time                        // start time of the pipeline
 	end         time.Time                        // end time of the pipeline
 }
 
-// New returns a new instance of Pipe
-func NewPipe(ds string, so []func(float64) (float64, error)) *Pipe {
+// NewSingleOpsPipe returns a new instance of Pipe that uses single ops to modify values that flow through
+func NewSingleOpsPipe(ds string, so []func(float64) (float64, error)) *Pipe {
 	return &Pipe{
 		Description: ds,
-		input:       nil,
 		singleOps:   so,
-		output:      nil,
+		aggregateOp: nil,
+	}
+}
+
+// NewAggregateOpPipe returns a new instance of Pipe with an aggregate function
+func NewAggregateOpPipe(ds string, ao func([]float64) (float64, error)) *Pipe {
+	return &Pipe{
+		Description: ds,
+		singleOps:   nil,
+		aggregateOp: ao,
 	}
 }
 
@@ -63,6 +72,22 @@ func (p *Pipe) Flow() error {
 		return fmt.Errorf("cannot flow input through nil singleOps")
 	}
 	p.output = map[string][]float64{}
+
+	if p.singleOps != nil && p.aggregateOp != nil {
+		// this should not happen
+		return fmt.Errorf("cannot perform single ops and aggregate ops")
+	}
+	if p.singleOps != nil {
+		return p.flowThroughSingleOps()
+	}
+	if p.aggregateOp != nil {
+		return p.flowThroughAggregateOp()
+	}
+	return nil
+}
+
+// flowThroughSingleOps does the work of the specified single ops on the pipeline
+func (p *Pipe) flowThroughSingleOps() error {
 	for col, rows := range p.input {
 		// TODO: use a sync/wait group to execute this in parallel
 		p.output[col] = make([]float64, len(rows))
@@ -80,6 +105,10 @@ func (p *Pipe) Flow() error {
 			p.output[col][i] = newVal
 		}
 	}
-	p.end = time.Now()
+	return nil
+}
+
+// flowThroughAggregateOp does the work of the specific aggregate op on the pipeline
+func (p *Pipe) flowThroughAggregateOp() error {
 	return nil
 }
