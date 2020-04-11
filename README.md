@@ -41,6 +41,5 @@ go test ./...
 
 1. Make pipes run in parallel
 1. Add pipe ability to report progress
-1. Add pipe ability to aggregate values
 1. Make structure allow the user specify whether to inform progress or not
 1. Other TODOs left in the code

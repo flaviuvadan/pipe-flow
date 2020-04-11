@@ -68,15 +68,12 @@ func (p *Pipe) Flow() error {
 	if p.input == nil {
 		return fmt.Errorf("cannot flow nil input through specified singleOps")
 	}
-	if p.singleOps == nil {
-		return fmt.Errorf("cannot flow input through nil singleOps")
-	}
-	p.output = map[string][]float64{}
-
 	if p.singleOps != nil && p.aggregateOp != nil {
 		// this should not happen
 		return fmt.Errorf("cannot perform single ops and aggregate ops")
 	}
+
+	p.output = map[string][]float64{}
 	if p.singleOps != nil {
 		return p.flowThroughSingleOps()
 	}
@@ -110,5 +107,14 @@ func (p *Pipe) flowThroughSingleOps() error {
 
 // flowThroughAggregateOp does the work of the specific aggregate op on the pipeline
 func (p *Pipe) flowThroughAggregateOp() error {
+	// there's a single col and row per pipe input, but using "for" here makes the pipe agnostic to the name of the col
+	for col, rows := range p.input {
+		p.output[col] = make([]float64, 1)
+		if val, err := p.aggregateOp(rows); err != nil {
+			return fmt.Errorf("failed to perform aggregate op on col (%v), err: %v", col, err)
+		} else {
+			p.output[col][0] = val
+		}
+	}
 	return nil
 }

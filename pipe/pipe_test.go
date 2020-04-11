@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPipe_Flow(t *testing.T) {
+func TestNewSingleOpsPipe_Flow(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name        string
@@ -95,6 +95,70 @@ func TestPipe_Flow(t *testing.T) {
 			o := p.GetOutput()
 			for k := range o {
 				assert.ElementsMatch(t, tt.pipeOut[k], o[k])
+			}
+		})
+	}
+}
+
+func TestNewAggregateOpPipe_Flow(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name        string
+		pipeOp      func([]float64) (float64, error)
+		pipeIn      map[string][]float64
+		pipeOut     map[string][]float64
+		expectedErr error
+	}{
+		{
+			name:   "test_returns_nil_on_empty_op",
+			pipeOp: nil,
+			pipeIn: map[string][]float64{
+				"a": {1, 1, 1},
+			},
+			pipeOut:     nil,
+			expectedErr: nil,
+		},
+		{
+			name: "test_return_aggregate_data",
+			pipeOp: func(values []float64) (float64, error) {
+				agg := 0.0
+				for _, v := range values {
+					agg += v
+				}
+				return agg, nil
+			},
+			pipeIn: map[string][]float64{
+				"a": {1, 1, 1},
+			},
+			pipeOut: map[string][]float64{
+				"a": {3},
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "test_returns_err_on_aggregate_func_error",
+			pipeOp: func(values []float64) (float64, error) {
+				return 0, fmt.Errorf("test error")
+			},
+			pipeIn: map[string][]float64{
+				"a": {1, 1, 1},
+			},
+			expectedErr: fmt.Errorf("failed to perform aggregate op on col (a), err: test error"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := NewAggregateOpPipe(tt.name, tt.pipeOp)
+			p.SetInput(tt.pipeIn)
+			err := p.Flow()
+			fmt.Printf("err: %v\n", err)
+			if err != nil {
+				assert.EqualError(t, err, tt.expectedErr.Error())
+			} else {
+				o := p.GetOutput()
+				for k := range o {
+					assert.ElementsMatch(t, tt.pipeOut[k], o[k])
+				}
 			}
 		})
 	}
